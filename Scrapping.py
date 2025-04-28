@@ -6,31 +6,36 @@ from urllib.parse import urljoin
 import re
 
 #O site utiliza o modelo de paginação, logo esta função é usada para percorer todas as páginas
-def pegarTodosOsCursos(html):
+def pegarTodosOsCursos(html, carregarTodos=False):
    pagina = 1
    todos_itens = []
 
-#Substituir por While true para percorrer todas as páginas ( Demora mais )
-   while pagina == 1:
+   # Substituir por While true para percorrer todas as páginas ( Demora mais )
+   while True:
       if pagina == 1:
          url = html  # primeira página não tem ?pagina=1
       else:
          url = f"{html}?pagina={pagina}"
+
       print(f"Scraping página {pagina}: {url}")
       response = requests.get(url)
       soup = BeautifulSoup(response.text, 'html.parser')
 
-      itens = soup.find_all('article')  # ajusta aqui para seu seletor correto
+      itens = soup.find_all('article') # ajusta aqui para seu seletor correto
 
       if not itens:
          break
 
       todos_itens.extend(itens)
 
+      if not carregarTodos:
+         break  # Só baixa a primeira página se carregarTodos=False
+
       time.sleep(1)  # pausa de 1 segundo entre as páginas
       pagina += 1
 
    return todos_itens
+
 
 def printItemInList(item):
    # pega cada atributo
@@ -144,7 +149,7 @@ itemList = pegarTodosOsCursos(html)
 loop = True
 while loop:
    try:
-      choice = int(input("1. Mostrar cursos 2. Filtrar por área 3. Pesquisar curso 4. Fechar programa: "))
+      choice = int(input("1.Mostrar cursos 2.Filtrar por área 3.Pesquisar curso 4.Fechar programa 5.Carregar mais páginas: "))
 
       if choice == 1:
          printList(itemList)
@@ -154,6 +159,9 @@ while loop:
          pesquisaPalavra(itemList)
       elif choice == 4:
          loop = False
+      elif choice == 5:
+         itemList = pegarTodosOsCursos(html, carregarTodos=True)
+         print("Todas as páginas foram carregadas!\n")
       else:
          print("Entrada inválida.\n")
 
