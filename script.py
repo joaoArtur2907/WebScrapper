@@ -191,15 +191,16 @@ def salvarEmJson(itemList):
       json.dump(itemListJson, f, ensure_ascii=False, indent=4)
    print("Itens salvos no arquivo: " + nomeArquivo)
 
-
 html = 'https://www.ev.org.br/cursos'
 baseURL = 'https://www.ev.org.br'
 
 # Pega cada article da página, que são cada card de curso
 itemList = pegarCursos(html)
 itemListManipulada = itemList
-
-loop = True
+if len(itemList) > 0:
+   loop = True
+else:
+   loop = False
 while loop:
    try:
       choice = int(input("1.Mostrar cursos 2.Filtrar por área 3.Pesquisar curso 4.Carregar mais páginas: 5.Salvar JSON 6.Sair sem salvar: "))
@@ -225,5 +226,3 @@ while loop:
 
    except ValueError:
       print("Entrada inválida.\n")
-
-# pesquisaPalavra(itemList)
